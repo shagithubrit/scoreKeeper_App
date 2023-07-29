@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <title>React App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-image: linear-gradient(to right, #DECBA4, #3E5151);
+
+        margin: 0;
+        padding: 0;
+      }
+
+      #root {
+        text-align: center;
+        padding: 20px;
+      }
+
+      h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      h2 {
+        font-size: 36px;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .score-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .score-buttons button {
+        outline: none;
+        border: none;
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        font-size: 20px;
+        font-weight: bold;
+        background-color:#3E5151;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+
+      .score-buttons button:hover {
+        background-color: #ff5555;
+      }
+
+      .ballwise-score {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        margin: 10px;
+      }
+
+      .ballwise-score span {
+        padding: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        border: 1px solid #333;
+        margin: 5px;
+      }
+
+      .ballwise-score strong {
+        color: #f00;
+      }
+
+      .comment-form {
+        margin-top: 20px;
+      }
+
+      .comment-form input[type="text"] {
+        padding: 5px;
+        width: 200px;
+        font-size: 16px;
+      }
+
+      .comment-form button {
+        padding: 8px 15px;
+        font-size: 16px;
+        font-weight: bold;
+        background-color: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+      #submitButton{
+        background: #333;
+	      color: white;
+	      border-style: outset;
+	      height: 50px;
+	      width: 100px;
+	      font: bold15px arial,sans-serif;
+	      text-shadow: none;
+      }
+
+      .comment-form button:hover {
+        background-color: #555;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      let score = 0;
+      let wickets = 0;
+      let ballwiseRes = [];
+      let hit = 0;
+      let inputRef = React.createRef();
+
+      function addRun(num) {
+        hit = num;
+        rootElement.render(<App />); // this will store the number ball wise
+      }
+      function wick() {
+        hit = 'w';
+        rootElement.render(<App />);
+      }
+
+      const ScoreButton = () => (
+        <div class="score-buttons">
+          <button onClick={() => addRun(1)}>1</button>
+          <button onClick={() => addRun(2)}>2</button>
+          <button onClick={() => addRun(3)}>3</button>
+          <button onClick={() => addRun(4)}>4</button>
+          <button onClick={() => addRun(5)}>5</button>
+          <button onClick={() => addRun(6)}>6</button>
+          <button onClick={wick}>wickets</button>
+        </div>
+      );
+
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        if (hit === 'w') {
+          wickets += 1;
+        } else {
+          score += hit;
+        }
+        ballwiseRes.unshift(
+          <span>{`${hit}, ${inputRef.current.value}`}</span>
+        );
+        hit = 0;
+        inputRef.current.value = "";
+
+        rootElement.render(<App />);
+      }
+
+      const Form = () => (
+        <form class="comment-form" onSubmit={handleSubmit}>
+          <input type="text" value={hit} />
+          <input ref={inputRef} placeholder="Add a comment" />
+          <button id="submitButton">Submit</button>
+        </form>
+      );
+
+      const App = () => (
+        <div>
+          <h3>Score Keeper App</h3>
+          <h2>
+            SCORE: {score}/{wickets}
+          </h2>
+          <ScoreButton />
+          <div class="ballwise-score">
+            {ballwiseRes.map((res, index) => (
+              <span key={index}>{res === 0 ? <strong>.</strong> : res}</span>
+            ))}
+          </div>
+          <Form />
+        </div>
+      );
+
+      const rootElement = ReactDOM.createRoot(document.getElementById("root"));
+      rootElement.render(<App />);
+    </script>
+  </body>
+</html>
